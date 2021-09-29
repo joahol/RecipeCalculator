@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,11 +51,14 @@ StorageHandler store;
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(charSequence.length()>0){
                 recipe.setRecipeWeight(Double.parseDouble(charSequence.toString()));
-                recipe.calculateWeights();
+
                 }
             }
             @Override
-            public void afterTextChanged(Editable editable) { }
+            public void afterTextChanged(Editable editable) {
+                Log.d("MainActivity: ","Recipe Weight Changed");
+                recipe.calculateWeights();
+            }
         });
 
         final CustomAdapter ca = new CustomAdapter(recipe);

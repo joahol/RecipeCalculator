@@ -90,7 +90,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     //public CustomAdapter(ArrayList<RecipeItem> dataset)
      public CustomAdapter(Recipe recipe){
         this.recipe = recipe;
-        //data = dataset;
+
     }
         @NonNull
         @Override
@@ -117,15 +117,21 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     if(charSequence.length()>0) {
                         recipe.getIngridients().get(index).setPercentage(Double.parseDouble(charSequence.toString()));
                         recipe.calculateWeights();
+
+                        //notifyItemChanged(index);
                         Log.v("CustomAdapter", "update datasource:" + charSequence);
+
                     }
                     }
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-
+              try {
+                  notifyDataSetChanged();
+              }catch(Exception e){}
                 }
             });
+
             ((EditText)viewHolder.getEtIngre()).addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -135,6 +141,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                     int index = viewHolder.getAdapterPosition();
                     recipe.getIngridients().get(index).setIngredient(charSequence.toString());
+
                     Log.v("CustomAdapter","update datasource:"+charSequence);
                 }
 
