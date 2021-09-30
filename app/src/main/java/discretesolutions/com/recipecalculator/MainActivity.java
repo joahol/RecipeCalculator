@@ -2,8 +2,8 @@ package discretesolutions.com.recipecalculator;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,12 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 FloatingActionButton btnAdd;
 RecyclerView rv;
 StorageHandler store;
@@ -27,6 +24,9 @@ StorageHandler store;
    // ArrayList<RecipeItem> items;
     EditText etWeight;
     EditText etName;
+ CustomAdapter ca;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +43,8 @@ StorageHandler store;
         layoutManager = new LinearLayoutManager(this);
 
         rv.setLayoutManager(layoutManager);
+        RecyclerView.ItemDecoration rid = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        rv.addItemDecoration(rid);
         //items = new ArrayList<RecipeItem>();
         etWeight.addTextChangedListener(new TextWatcher() {
             @Override
@@ -61,9 +63,21 @@ StorageHandler store;
             }
         });
 
-        final CustomAdapter ca = new CustomAdapter(recipe);
+         ca = new CustomAdapter(recipe, new CustomAdapter.onFieldChange() {
+
+
+             @Override
+             public void onPercentageChange(final int index) {
+              if(!rv.isComputingLayout() && rv.getScrollState()==RecyclerView.SCROLL_STATE_IDLE){
+                  ca.notifyDataSetChanged();
+              }
+                   //  rv.getAdapter().notifyItemChanged(index);
+             }
+
+         });
 
         rv.setAdapter(ca);
+
         ca.notifyDataSetChanged();
         setSupportActionBar(toolbar);
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +85,7 @@ StorageHandler store;
             public void onClick(View view) {
                 RecipeItem ri = new RecipeItem(recipe);
                 ri.setIngredient("Ing");
-                ri.setPercentage(10.5);
+                ri.setPercentage(10);
 
                 ca.addItem(ri);
                 ca.notifyDataSetChanged();
@@ -108,6 +122,7 @@ StorageHandler store;
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
 }

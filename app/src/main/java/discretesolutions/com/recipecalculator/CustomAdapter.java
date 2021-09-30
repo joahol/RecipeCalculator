@@ -11,18 +11,22 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
-
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
     private Recipe recipe=null;
-    //private ArrayList<RecipeItem> data;
+    RecyclerView rView;
 
+    public interface onFieldChange{
+        void onPercentageChange(int index);
+    }
+
+    private onFieldChange onFieldChangeListener;
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView etIngre;
         private final TextView etEstimation;
         private final EditText etPercent;
+
+
         private Recipe recipe;
 
         public ViewHolder(View view) {
@@ -31,40 +35,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             etIngre = view.findViewById(R.id.etIngridient);
             etEstimation = view.findViewById(R.id.etCalculated);
             etPercent = view.findViewById(R.id.etPerDist);
-            etPercent.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-            etIngre.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-
-                }
-
-                @Override
-                public void afterTextChanged(Editable editable) {
-
-                }
-            });
-
         }
 
         public TextView getEtIngre() {
@@ -79,32 +49,16 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             return etPercent;
         }
 
-
-
     }
-  //  public CustomAdapter(Recipe recipe){
-    //    this.recipe = recipe;
-      //  data = (ArrayList<RecipeItem>) recipe.getIngridients();
-    //}
-
-    //public CustomAdapter(ArrayList<RecipeItem> dataset)
-     public CustomAdapter(Recipe recipe){
+     public CustomAdapter(Recipe recipe, onFieldChange onfieldchangelstener){
         this.recipe = recipe;
-
+        this.onFieldChangeListener = onfieldchangelstener;
     }
         @NonNull
         @Override
         public CustomAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
             View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.calclist, viewGroup, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull final CustomAdapter.ViewHolder viewHolder, int i) {
-
-            viewHolder.getEtEstimation().setText(String.valueOf(recipe.getIngridients().get(i).Estimation));
-            viewHolder.getEtPercent().setText(String.valueOf(recipe.getIngridients().get(i).Percentage));
-            viewHolder.getEtIngre().setText(recipe.getIngridients().get(i).Ingredient);
+            final ViewHolder viewHolder = new ViewHolder(view);
             ((EditText)viewHolder.getEtPercent()).addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -117,19 +71,18 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                     if(charSequence.length()>0) {
                         recipe.getIngridients().get(index).setPercentage(Double.parseDouble(charSequence.toString()));
                         recipe.calculateWeights();
+//notifyItemChanged(index);
+                        onFieldChangeListener.onPercentageChange(index);
 
-                        //notifyItemChanged(index);
                         Log.v("CustomAdapter", "update datasource:" + charSequence);
-
                     }
-                    }
+                };
 
                 @Override
                 public void afterTextChanged(Editable editable) {
-              try {
-                  notifyDataSetChanged();
-              }catch(Exception e){}
+                    viewHolder.getEtEstimation().requestFocus();
                 }
+
             });
 
             ((EditText)viewHolder.getEtIngre()).addTextChangedListener(new TextWatcher() {
@@ -150,6 +103,17 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
                 }
             });
+
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final CustomAdapter.ViewHolder viewHolder, int i) {
+
+            viewHolder.getEtEstimation().setText(String.valueOf(recipe.getIngridients().get(i).Estimation));
+            viewHolder.getEtPercent().setText(String.valueOf(recipe.getIngridients().get(i).Percentage));
+            viewHolder.getEtIngre().setText(recipe.getIngridients().get(i).Ingredient);
+
         }
 
         @Override
