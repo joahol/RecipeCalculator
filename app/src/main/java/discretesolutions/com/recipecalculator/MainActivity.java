@@ -21,7 +21,6 @@ RecyclerView rv;
 StorageHandler store;
     RecyclerView.LayoutManager layoutManager;
     Recipe recipe;
-   // ArrayList<RecipeItem> items;
     EditText etWeight;
     EditText etName;
  CustomAdapter ca;
@@ -41,21 +40,23 @@ StorageHandler store;
         store = new StorageHandler(this);
 
         layoutManager = new LinearLayoutManager(this);
-
         rv.setLayoutManager(layoutManager);
+        rv.setItemAnimator(null);
         RecyclerView.ItemDecoration rid = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rv.addItemDecoration(rid);
-        //items = new ArrayList<RecipeItem>();
+
         etWeight.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(charSequence.length()>0){
-                recipe.setRecipeWeight(Double.parseDouble(charSequence.toString()));
-
+                    recipe.setRecipeWeight(Double.parseDouble(charSequence.toString()));
                 }
             }
+
             @Override
             public void afterTextChanged(Editable editable) {
                 Log.d("MainActivity: ","Recipe Weight Changed");
@@ -69,9 +70,8 @@ StorageHandler store;
              @Override
              public void onPercentageChange(final int index) {
               if(!rv.isComputingLayout() && rv.getScrollState()==RecyclerView.SCROLL_STATE_IDLE){
-                  ca.notifyDataSetChanged();
+                  ca.notifyItemChanged(index);
               }
-                   //  rv.getAdapter().notifyItemChanged(index);
              }
 
          });
