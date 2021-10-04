@@ -1,10 +1,12 @@
 package discretesolutions.com.recipecalculator;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +20,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-public class MainActivity extends AppCompatActivity{
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements FileDialogFragment.FileDialogInterface{
 
     FloatingActionButton btnAdd;
     RecyclerView rv;
@@ -28,7 +33,7 @@ public class MainActivity extends AppCompatActivity{
     EditText etWeight;
     EditText etName;
     CustomAdapter ca;
-
+    String fileToLoad="";
 
 
     @Override
@@ -121,6 +126,8 @@ public class MainActivity extends AppCompatActivity{
                 break;
             }
             case R.id.load:{
+                ArrayList<String> files = store.getFileList();
+                showFileDialog(files);
                 recipe = store.loadRecipe("null.txt");
                 Log.v("MainActivity:","Return from storage load recipe");
                 ca.setRecipe(recipe);
@@ -148,6 +155,31 @@ public class MainActivity extends AppCompatActivity{
         Uri uri  = intent.getData();
         Log.v("ActResult",uri.toString());
     }
+    public void showFileDialog(ArrayList<String> files){
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("filenames", files);
+        FileDialogFragment fDialog = new FileDialogFragment();
+        fDialog.setArguments(bundle);
+        fDialog.show(getSupportFragmentManager(),"File");
+    }
 
 
+    /*
+
+    @Param Short version of filename, without extension
+     */
+    @Override
+    public void onSelectedFileEvent(String file) {
+    fileToLoad = file;
+    Log.v("onSelected file:",file);
+    }
+
+    /*
+
+    User aborted without selecting a file
+     */
+    @Override
+    public void onCanceldEvent() {
+
+    }
 }

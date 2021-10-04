@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -95,7 +96,7 @@ public void SaveRecipe(Recipe tRecipe){
                      saveString += jo.toString();
                     Log.e("StorageHandler",jo.toString());
                 }
-                File sFile = new File(dir,tRecipe.getRecipeName()+".txt");
+                File sFile = new File(dir,tRecipe.getRecipeName()+".json");
                 checkPermissions();
                 saveFile(sFile,saveString);
                 //Save data file to directory
@@ -149,8 +150,31 @@ private void readJSONRecipe(String path)  {
         e.printStackTrace();
     }
 }
+/*
+@return Returns a list of json filenames stored in DIRECTORY_DOCUMENTS/Recipes
+ */
+public ArrayList<String> getFileList(){
+        ArrayList<String> fileList = new ArrayList<String>();
+    File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),"Recipes");
+    FilenameFilter fnf = new FilenameFilter() {
+        @Override
+        public boolean accept(File file, String filename) {
+            Log.v("FileList:",filename);
+            int index = filename.indexOf(".");
+            String extension = filename.substring(index,filename.length());
+                if (extension.toLowerCase().equals(".json")) {
+                    return true;
+                }
 
-
+        return false;}
+    };
+    File[] files = dir.listFiles(fnf);
+        for(File f : files){
+            Log.v("FileName:",f.getName());
+            fileList.add(f.getName());
+        }
+        return fileList;
+}
 
 public void openDir(Uri uri){
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
@@ -163,13 +187,11 @@ public void openDir(Uri uri){
         File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),"Recipes");
         String fname = dir.getAbsolutePath()+"/"+fileName;
         File file = new File(fname);
-
         try {
             FileReader fr = new FileReader(file);
             BufferedReader br = new BufferedReader(fr);
             String res= br.readLine();
             while(res !=null){
-
                 Log.v("Load",res);
                 res = br.readLine();
             }
