@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -91,11 +92,12 @@ public void SaveRecipe(Recipe tRecipe){
                 List<RecipeItem> ingredients = tRecipe.getIngridients();
                 JSONArray jsonArr = createJSONObject(ingredients);
                 String saveString ="";
-                for (int i = 0; i < jsonArr.length(); i++) {
-                    JSONObject jo = (JSONObject) jsonArr.get(i);
-                     saveString += jo.toString();
-                    Log.e("StorageHandler",jo.toString());
-                }
+                JSONObject jso = new JSONObject();
+                jso.put("name",tRecipe.getRecipeName());
+                jso.put("weight",tRecipe.getRecipeWeight());
+                jso.put("ing",jsonArr);
+                saveString = jso.toString();
+                Log.v("JSON STRING:",saveString);
                 File sFile = new File(dir,tRecipe.getRecipeName()+".json");
                 checkPermissions();
                 saveFile(sFile,saveString);
@@ -131,10 +133,11 @@ return test;
            for (RecipeItem ri : recipe) {
                JSONObject jsonStore = new JSONObject();
 
-               jsonStore.put("ingridient", ri.getIngredient());
+               jsonStore.put("ingredient", ri.getIngredient());
                jsonStore.put("percentage", ri.getPercentage());
                jsonStore.put("estimate", ri.getEstimation());
-               System.out.println(jsonStore.toString());
+               jsonarr.put(jsonStore);
+
            }
        }catch (JSONException jse){
            jse.printStackTrace();
@@ -142,6 +145,7 @@ return test;
        }
        return jsonarr;
 }
+
 private void readJSONRecipe(String path)  {
     try {
         FileInputStream fs = activity.openFileInput(path);

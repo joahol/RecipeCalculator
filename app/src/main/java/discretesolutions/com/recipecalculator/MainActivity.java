@@ -53,7 +53,22 @@ public class MainActivity extends AppCompatActivity implements FileDialogFragmen
         rv.setItemAnimator(null);
         RecyclerView.ItemDecoration rid = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rv.addItemDecoration(rid);
+        etName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            recipe.setRecipeName(String.valueOf(charSequence));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         etWeight.addTextChangedListener(new TextWatcher() {
 
