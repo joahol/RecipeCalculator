@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements FileDialogFragmen
         rv.setItemAnimator(null);
         RecyclerView.ItemDecoration rid = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         rv.addItemDecoration(rid);
+
+        //getSupportFragmentManager()
         etName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -143,10 +145,6 @@ public class MainActivity extends AppCompatActivity implements FileDialogFragmen
             case R.id.load:{
                 ArrayList<String> files = store.getFileList();
                 showFileDialog(files);
-                recipe = store.loadRecipe("null.txt");
-                Log.v("MainActivity:","Return from storage load recipe");
-                ca.setRecipe(recipe);
-                ca.notifyDataSetChanged();
 
                 break;
             }
@@ -170,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements FileDialogFragmen
         Uri uri  = intent.getData();
         Log.v("ActResult",uri.toString());
     }
+
     public void showFileDialog(ArrayList<String> files){
         Bundle bundle = new Bundle();
         bundle.putStringArrayList("filenames", files);
@@ -187,6 +186,15 @@ public class MainActivity extends AppCompatActivity implements FileDialogFragmen
     public void onSelectedFileEvent(String file) {
     fileToLoad = file;
     Log.v("onSelected file:",file);
+        if(!fileToLoad.equals("")) {
+            recipe = store.loadRecipe(fileToLoad);
+            Log.v("rName",recipe.getRecipeName());
+            etName.setText(recipe.getRecipeName());
+            //etWeight.setText(0);
+            Log.v("MainActivity:", "Return from storage load recipe");
+            ca.setRecipe(recipe);
+            ca.notifyDataSetChanged();
+        }
     }
 
     /*
@@ -194,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements FileDialogFragmen
     User aborted without selecting a file
      */
     @Override
-    public void onCanceldEvent() {
+    public void onCanceldEvent() {//Does nothing yet
 
     }
 }

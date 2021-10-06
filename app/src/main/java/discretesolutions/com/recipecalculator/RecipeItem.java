@@ -14,6 +14,11 @@ public class RecipeItem {
         Estimation = 0.0;
         mc = mc;
     }
+
+    public RecipeItem() {
+
+    }
+
     public void setIngredient(String ingridient){Ingredient = ingridient;}
     public void setPercentage(double percentage){
         Percentage = percentage;

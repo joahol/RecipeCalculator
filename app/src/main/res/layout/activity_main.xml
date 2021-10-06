@@ -36,40 +36,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="65dp"
             android:layout_marginLeft="5dp"
+            android:background="@color/colorBright"
             android:layout_marginRight="5dp">
             <TextView
                 android:id="@+id/tvRecipename"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Recipe name:"
-                android:textSize="18sp" />
+                android:textSize="20sp" />
 
             <EditText
                 android:id="@+id/etName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:textAlignment="center"
+                android:background="@null"
                 android:ems="10"
                 android:inputType="text"
                 android:text=""
+                android:gravity="left"
                 android:textSize="18sp" />
 
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
+            android:background="@color/colorBright"
             android:layout_marginRight="5dp"
             android:orientation="horizontal">
             <TextView
@@ -87,6 +91,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
+                android:background="@null"
                 android:textAlignment="center"
                 android:inputType="number"
                 android:text="0"
@@ -108,7 +113,8 @@
             android:focusableInTouchMode="true"
             android:descendantFocusability="beforeDescendants"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:background="@color/colorBright"
+            android:layout_height="match_parent"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"

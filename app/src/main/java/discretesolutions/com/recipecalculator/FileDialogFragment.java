@@ -35,10 +35,12 @@ public class FileDialogFragment extends DialogFragment {
           */
          public void onCanceldEvent();
     }
+
 public FileDialogInterface fileDialogInterface;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstance){
+
         final ArrayList<String> fileNames = getArguments().getStringArrayList ("filenames");
         AlertDialog.Builder aDialog = new AlertDialog.Builder(getActivity());
         this.filenames = fileNames.toArray(new String[0]);
@@ -48,10 +50,11 @@ public FileDialogInterface fileDialogInterface;
                   public void onClick(DialogInterface dialogInterface, int i) {
                     selectedFile = filenames[i];
                     Log.v("FileDialog:",selectedFile);
+
                     fileDialogInterface.onSelectedFileEvent(selectedFile);
                   }
               });
-    return aDialog.create();
+        return aDialog.create();
     }
 
     @Override

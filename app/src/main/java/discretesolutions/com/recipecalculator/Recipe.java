@@ -17,7 +17,7 @@ public Recipe(){
 public String getRecipeName(){return recipeName;}
 
 public void setRecipeName(String RecipeName){
-    recipeName = RecipeName;
+    this.recipeName = RecipeName;
 }
 
 public void setRecipeWeight(double RecipeWeight){
@@ -27,11 +27,15 @@ public void setRecipeWeight(double RecipeWeight){
 public double getRecipeWeight(){return recipeWeight;}
 
     public void setIngredients(List<RecipeItem> ingredients){
+
     this.ingridients = ingredients;
     };
 
     public List<RecipeItem> getIngridients(){return this.ingridients;}
 
+    public void addRecipeItem(RecipeItem rit){
+        this.ingridients.add(rit);
+    }
     @Override
     public void calculateWeights() {
 

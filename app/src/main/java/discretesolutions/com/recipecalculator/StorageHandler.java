@@ -13,6 +13,9 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.JsonReader;
+
+import android.util.JsonToken;
 import android.util.JsonWriter;
 import android.util.Log;
 
@@ -30,6 +33,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -118,7 +122,6 @@ private boolean saveFile(File file, String data) {
      FileOutputStream fs = new FileOutputStream(file);
      fs.write(data.getBytes());
      fs.close();
-     Log.v("Path", file.getAbsolutePath().toString());
      test = false;
  }catch(Exception e){
      Log.v("Error: ","SaveFile: "+e.toString());
@@ -146,14 +149,6 @@ return test;
        return jsonarr;
 }
 
-private void readJSONRecipe(String path)  {
-    try {
-        FileInputStream fs = activity.openFileInput(path);
-
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-    }
-}
 /*
 @return Returns a list of json filenames stored in DIRECTORY_DOCUMENTS/Recipes
  */
@@ -186,27 +181,65 @@ public void openDir(Uri uri){
         startActivityForResult((Activity)handle,intent, 2,null);
 }
 
-    public Recipe loadRecipe(String fileName) {
-        Recipe r = new Recipe();
+    public Recipe loadRecipe(String fileName)  {
+
+        final Recipe r = new Recipe();
         File dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),"Recipes");
-        String fname = dir.getAbsolutePath()+"/"+fileName;
-        File file = new File(fname);
+        final String fname = dir.getAbsolutePath()+"/"+fileName;
+        //final File file = new File(fname);
+
+        Log.v("LoadFile:",fname);
         try {
-            FileReader fr = new FileReader(file);
-            BufferedReader br = new BufferedReader(fr);
-            String res= br.readLine();
-            while(res !=null){
-                Log.v("Load",res);
-                res = br.readLine();
+            JsonReader jsonReader = new JsonReader(new FileReader(fname));
+            jsonReader.beginObject();
+            if (jsonReader.hasNext()){
+
+
+                String name = jsonReader.nextName();
+                String current = jsonReader.nextString();
+
+                String ingre = jsonReader.nextName();
+
+                Log.v(",,,",ingre);
+
+                double  we = jsonReader.nextDouble();
+                String pen = jsonReader.nextName();
+                Log.v("Read: ",name+ " "+current+" "+ingre+" "+pen+" "+we);
+                r.setRecipeName(current);
+                r.setRecipeWeight(we);
+                jsonReader.beginArray();
+                jsonReader.beginObject();
+                while(jsonReader.hasNext()){
+
+                    RecipeItem ri = new RecipeItem();
+                    if(jsonReader.peek()==JsonToken.BEGIN_OBJECT){
+                        jsonReader.beginObject();
+                    }
+                    String sa = jsonReader.nextName();
+                    String pe = jsonReader.nextString();
+                    ri.setIngredient(pe);
+                    String t = jsonReader.nextName();
+
+                    double perc = jsonReader.nextDouble();
+
+                    ri.setPercentage(perc);
+                    String n = jsonReader.nextName();
+
+                    double estim = jsonReader.nextDouble();
+                    ri.setEstimation(estim);
+                    r.addRecipeItem(ri);
+                    Log.v("RI",ri.getIngredient()+" "+String.valueOf(ri.getPercentage())+" "+String.valueOf(ri.getEstimation()));
+                    jsonReader.endObject();
+
+                    //{"name":"test2","weight":1550,"ing":[{"ingredient":"Ing","percentage":11210,"estimate":173755},{"ingredient":"Ing","percentage":10,"estimate":155}]}
+//{"name":"tewt3","weight":55551,"ing":[{"ingredient":"King","percentage":10,"estimate":5555.1},{"ingredient":"Ing234","percentage":10,"estimate":5555.1},{"ingredient":"trq","percentage":50,"estimate":27775.5}]}
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.v("ec",e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            Log.v("ec",e.getMessage());
         }
-
         return r;
     }
 }
